@@ -30,3 +30,7 @@ a.editable-empty {
     color: #3c8dbc;
     border-bottom: none !important;
 }
+
+.main-footer {
+    padding: 3px !important;
+}
