@@ -199,7 +199,7 @@ class Builder
      */
     public function getResource($slice = null)
     {
-        if ($this->mode == self::MODE_CREATE) {
+        if ($this->mode == self::MODE_CREATE || $this->mode == self::MODE_VIEW) {
             return $this->form->resource(-1);
         }
         if ($slice !== null) {
