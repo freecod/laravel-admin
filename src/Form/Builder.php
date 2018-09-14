@@ -47,6 +47,7 @@ class Builder
     /**
      * Modes constants.
      */
+	const MODE_VIEW = 'view';
     const MODE_EDIT = 'edit';
     const MODE_CREATE = 'create';
 
@@ -254,7 +255,11 @@ class Builder
         if ($this->action) {
             return $this->action;
         }
-
+	
+	    if ($this->isMode(static::MODE_VIEW)) {
+		    return '#';
+	    }
+	    
         if ($this->isMode(static::MODE_EDIT)) {
             return $this->form->resource().'/'.$this->id;
         }
@@ -399,6 +404,10 @@ class Builder
         if ($this->title) {
             return $this->title;
         }
+	
+	    if ($this->mode == static::MODE_VIEW) {
+		    return trans('admin.view');
+	    }
 
         if ($this->mode == static::MODE_CREATE) {
             return trans('admin.create');
@@ -571,6 +580,29 @@ if ($('.has-error').length) {
 
 SCRIPT;
             Admin::script($script);
+        }
+        
+        // make all fields read-only for view mode
+        if ($this->getMode() == self::MODE_VIEW) {
+        	
+        	if ($this->hasRows()) {
+        		
+		        foreach ($this->getRows() as $row) {
+			        /** @var Row $row */
+			        
+			        foreach ($row->getFields() as $field) {
+				        /** @var Field $field */
+				        $field->readOnly();
+			        }
+		        }
+		        
+	        } else {
+		        foreach ($this->fields() as $field) {
+			        /** @var Field $field */
+			        $field->readOnly();
+        	    }
+	        }
+
         }
 
         $data = [

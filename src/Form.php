@@ -8,6 +8,7 @@ use Encore\Admin\Form\Builder;
 use Encore\Admin\Form\Field;
 use Encore\Admin\Form\Row;
 use Encore\Admin\Form\Tab;
+use Encore\Admin\Form\Tools;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations;
@@ -235,9 +236,37 @@ class Form implements Renderable
         $this->builder->setResourceId($id);
 
         $this->setFieldValue($id);
+	    $this->tools(function (Tools $tools) {
+		    $tools->disableEdit();
+	    });
 
         return $this;
     }
+	
+	/**
+	 * Generate a view form.
+	 *
+	 * @param $id
+	 *
+	 * @return $this
+	 */
+	public function view($id)
+	{
+		$this->builder->setMode(Builder::MODE_VIEW);
+		$this->builder->setResourceId($id);
+		
+		$this->setFieldValue($id);
+		$this->tools(function (Tools $tools) {
+			$tools->disableView();
+		});
+		
+		$this->builder->getFooter()->disableReset();
+		$this->builder->getFooter()->disableSubmit();
+		$this->builder->getFooter()->disableEditingCheck();
+		$this->builder->getFooter()->disableViewCheck();
+		
+		return $this;
+	}
 
     /**
      * Use tab to split form.
