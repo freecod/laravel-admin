@@ -6,6 +6,8 @@ use Encore\Admin\Form\Field;
 
 class Text extends Field
 {
+    protected $iconClass;
+
     use PlainInput;
 
     /**
@@ -17,7 +19,9 @@ class Text extends Field
     {
         $this->initPlainInput();
 
-        $this->prepend('<i class="fa fa-pencil fa-fw"></i>')
+        $icon = $this->iconClass ?? 'fa-pencil';
+
+        $this->prepend("<i class=\"fa {$icon} fa-fw\"></i>")
             ->defaultAttribute('type', 'text')
             ->defaultAttribute('id', $this->id)
             ->defaultAttribute('name', $this->elementName ?: $this->formatName($this->column))
@@ -31,5 +35,10 @@ class Text extends Field
         ]);
 
         return parent::render();
+    }
+
+    public function setIconClass($class)
+    {
+        $this->iconClass = $class;
     }
 }
