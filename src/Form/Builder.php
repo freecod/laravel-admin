@@ -581,6 +581,13 @@ if ($('.has-error').length) {
 SCRIPT;
             Admin::script($script);
         }
+
+        // disable all tools except List for Create mode
+        if ($this->getMode() == self::MODE_CREATE) {
+            $this->tools->disableView();
+            $this->tools->disableEdit();
+            $this->tools->disableDelete();
+        }
         
         // make all fields read-only for view mode
         if ($this->getMode() == self::MODE_VIEW) {
