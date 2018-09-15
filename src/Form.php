@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Class Form.
  *
+ * @method Field\Address        address($column, $label = '', $daDataApiKey = '', $latField = '', $lonField = '')
  * @method Field\Text           text($column, $label = '')
  * @method Field\Checkbox       checkbox($column, $label = '')
  * @method Field\SimpleCheckbox simple_checkbox($column, $label = '')
@@ -1360,6 +1361,7 @@ class Form implements Renderable
     public static function registerBuiltinFields()
     {
         $map = [
+            'address'        => Field\Address::class,
             'button'         => Field\Button::class,
             'checkbox'       => Field\Checkbox::class,
             'color'          => Field\Color::class,
