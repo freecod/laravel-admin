@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @method Field\Text           text($column, $label = '')
  * @method Field\Checkbox       checkbox($column, $label = '')
+ * @method Field\SimpleCheckbox simple_checkbox($column, $label = '')
  * @method Field\Radio          radio($column, $label = '')
  * @method Field\Select         select($column, $label = '')
  * @method Field\MultipleSelect multipleSelect($column, $label = '')
@@ -1390,6 +1391,7 @@ class Form implements Renderable
             'radio'          => Field\Radio::class,
             'rate'           => Field\Rate::class,
             'select'         => Field\Select::class,
+            'simple_checkbox'=> Field\SimpleCheckbox::class,
             'slider'         => Field\Slider::class,
             'switch'         => Field\SwitchField::class,
             'text'           => Field\Text::class,
