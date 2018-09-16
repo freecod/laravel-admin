@@ -377,6 +377,11 @@ EOT;
 
         $this->attribute('data-value', implode(',', (array) $this->value()));
 
+        if (isset($this->attributes['readonly'])) {
+            $this->script = '';
+            $this->attributes['disabled'] = true;
+        }
+
         return parent::render();
     }
 }

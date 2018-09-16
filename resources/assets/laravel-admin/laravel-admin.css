@@ -47,3 +47,9 @@ td > a > i.fa {
 .box-footer label:last-of-type {
   display: none;
 }
+
+select[disabled] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
