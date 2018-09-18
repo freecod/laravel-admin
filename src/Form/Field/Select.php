@@ -378,7 +378,7 @@ EOT;
         $this->attribute('data-value', implode(',', (array) $this->value()));
 
         if (isset($this->attributes['readonly'])) {
-            $this->script = '';
+            $this->script .= " $('{$this->getElementClassSelector()}').select2({'disabled': true}); ";
             $this->attributes['disabled'] = true;
         }
 
