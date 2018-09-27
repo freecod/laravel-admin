@@ -65,7 +65,7 @@ class Address extends Field
 	    $lat = $this->id['lat'] ?? 'false';
         $lon = $this->id['lon'] ?? 'false';
 
-	    if ($this->apiKey) {
+	    if ($this->apiKey && !isset($this->attributes['readonly'])) {
 
             $this->script = <<<EOT
             $(".{$this->id['address']}").suggestions({
