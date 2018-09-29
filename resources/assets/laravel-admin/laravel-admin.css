@@ -31,7 +31,7 @@ a.editable-empty {
     border-bottom: none !important;
 }
 
-td > a > i.fa {
+td > a > i.fa, .dd-list .pull-right.dd-nodrag > a > i.fa {
   font-size: 16px;
   text-rendering: unset;
   margin-right: 10px;
@@ -52,4 +52,8 @@ select[disabled] {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+}
+
+.table.table-hover thead th:last-of-type {
+    width: 150px;
 }
