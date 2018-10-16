@@ -177,18 +177,12 @@ class Form implements Renderable
      * @var array
      */
     public $rows = [];
-	
-	/**
-	 * Call only for create model
-	 * @var null|Closure
-	 */
-    public $onlyForNewClosure = null;
-	
-	/**
-	 * Call only for exist model
-	 * @var null|Closure
-	 */
-	public $onlyForExistClosure = null;
+
+    /**
+     * Call before render
+     * @var null|Closure
+     */
+    public $preRenderClosure = null;
 
     /**
      * Create a new form instance.
@@ -206,23 +200,14 @@ class Form implements Renderable
             $callback($this);
         }
     }
-	
-	/**
-	 * Call for new model
-	 * @param Closure|null $callback
-	 */
-    public function onlyForNew(Closure $callback = null)
+
+    /**
+     * Call for exist model
+     * @param Closure|null $callback
+     */
+    public function preRender(Closure $callback = null)
     {
-	    $this->onlyForNewClosure = $callback;
-    }
-	
-	/**
-	 * Call for exist model
-	 * @param Closure|null $callback
-	 */
-    public function onlyForExist(Closure $callback = null)
-    {
-    	$this->onlyForExistClosure = $callback;
+        $this->preRenderClosure = $callback;
     }
 
     /**
@@ -254,21 +239,6 @@ class Form implements Renderable
     {
         return $this->builder;
     }
-	
-	/**
-	 * Call closure in $this context for new or exist model
-	 * @param $id
-	 */
-    protected function callClosureOnlyFor($id)
-    {
-    	if (!$id && $this->onlyForNewClosure instanceof Closure) {
-		    ($this->onlyForNewClosure)($this);
-	    }
-	
-	    if ($id && $this->onlyForExistClosure instanceof Closure) {
-		    ($this->onlyForExistClosure)($this, $id);
-	    }
-    }
 
     /**
      * Generate a edit form.
@@ -279,8 +249,6 @@ class Form implements Renderable
      */
     public function edit($id)
     {
-    	$this->callClosureOnlyFor($id);
-	    
         $this->builder->setMode(Builder::MODE_EDIT);
         $this->builder->setResourceId($id);
 
@@ -301,8 +269,6 @@ class Form implements Renderable
 	 */
 	public function view($id)
 	{
-		$this->callClosureOnlyFor($id);
-		
 		$this->builder->setMode(Builder::MODE_VIEW);
 		$this->builder->setResourceId($id);
 		
@@ -432,6 +398,43 @@ class Form implements Renderable
         }
 
         return $this->redirectAfterStore();
+    }
+
+    /**
+     * Return field for modify
+     * 
+     * @param $column
+     * @return Field|null
+     */
+    public function modifyField($column)
+    {
+        return $this->getFieldByColumn($column);
+    }
+
+    /**
+     * Remove field
+     * @param $column
+     * @return bool
+     */
+    public function deleteFiled($column)
+    {
+        $fields = $this->builder->fields()->filter(
+            function (Field $field) use ($column) {
+                if (is_array($field->column())) {
+                    return in_array($column, $field->column());
+                }
+
+                return $field->column() == $column;
+            }
+        )->all();
+
+        if (count($fields)) {
+            $key = array_first(array_keys($fields));
+            $this->builder->fields()->forget($key);
+            return true;
+        }
+        
+        return false;
     }
 
     /**
@@ -1378,6 +1381,9 @@ class Form implements Renderable
      */
     public function render()
     {
+        if ($this->preRenderClosure instanceof Closure) {
+            ($this->preRenderClosure)($this, $this->builder->getResourceId());
+        }
         try {
             return $this->builder->render();
         } catch (\Exception $e) {
