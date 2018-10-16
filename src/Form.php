@@ -177,6 +177,18 @@ class Form implements Renderable
      * @var array
      */
     public $rows = [];
+	
+	/**
+	 * Call only for create model
+	 * @var null|Closure
+	 */
+    public $onlyForNewClosure = null;
+	
+	/**
+	 * Call only for exist model
+	 * @var null|Closure
+	 */
+	public $onlyForExistClosure = null;
 
     /**
      * Create a new form instance.
@@ -193,6 +205,24 @@ class Form implements Renderable
         if ($callback instanceof Closure) {
             $callback($this);
         }
+    }
+	
+	/**
+	 * Call for new model
+	 * @param Closure|null $callback
+	 */
+    public function onlyForNew(Closure $callback = null)
+    {
+	    $this->onlyForNewClosure = $callback;
+    }
+	
+	/**
+	 * Call for exist model
+	 * @param Closure|null $callback
+	 */
+    public function onlyForExist(Closure $callback = null)
+    {
+    	$this->onlyForExistClosure = $callback;
     }
 
     /**
@@ -224,6 +254,21 @@ class Form implements Renderable
     {
         return $this->builder;
     }
+	
+	/**
+	 * Call closure in $this context for new or exist model
+	 * @param $id
+	 */
+    protected function callClosureOnlyFor($id)
+    {
+    	if (!$id && $this->onlyForNewClosure instanceof Closure) {
+		    ($this->onlyForNewClosure)($this);
+	    }
+	
+	    if ($id && $this->onlyForExistClosure instanceof Closure) {
+		    ($this->onlyForExistClosure)($this, $id);
+	    }
+    }
 
     /**
      * Generate a edit form.
@@ -234,6 +279,8 @@ class Form implements Renderable
      */
     public function edit($id)
     {
+    	$this->callClosureOnlyFor($id);
+	    
         $this->builder->setMode(Builder::MODE_EDIT);
         $this->builder->setResourceId($id);
 
@@ -254,6 +301,8 @@ class Form implements Renderable
 	 */
 	public function view($id)
 	{
+		$this->callClosureOnlyFor($id);
+		
 		$this->builder->setMode(Builder::MODE_VIEW);
 		$this->builder->setResourceId($id);
 		
