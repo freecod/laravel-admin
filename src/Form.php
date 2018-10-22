@@ -366,6 +366,10 @@ class Form implements Renderable
      */
     public function store()
     {
+	    if ($this->preRenderClosure instanceof Closure) {
+		    ($this->preRenderClosure)($this, null);
+	    }
+	    
         $data = Input::all();
 
         // Handle validation errors.
@@ -572,6 +576,10 @@ class Form implements Renderable
      */
     public function update($id, $data = null)
     {
+	    if ($this->preRenderClosure instanceof Closure) {
+		    ($this->preRenderClosure)($this, $id);
+	    }
+	    
         $data = ($data) ?: Input::all();
 
         $isEditable = $this->isEditable($data);
@@ -1139,6 +1147,10 @@ class Form implements Renderable
 
         /** @var Field $field */
         foreach ($this->builder->fields() as $field) {
+        	if (in_array($field->column(), $this->ignored)) {
+        		continue;
+	        }
+        	
             if (!$validator = $field->getValidator($input)) {
                 continue;
             }
