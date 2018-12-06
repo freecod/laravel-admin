@@ -8,8 +8,8 @@
 
         <div class="input-group">
             <div class="checkbox">
-                <label class="checkbox-inline">
-                    <input type="checkbox" id="check_{{$id}}" value="1" {{ old($column, $value) ? 'checked' : '' }} {{ $attributes }} autocomplete="off" style="cursor: pointer; margin-top: -6px;"/>
+                <label class="checkbox-inline" style="cursor: pointer; margin-top: -6px;">
+                    <input type="checkbox" id="check_{{$name}}" value="1" {{ old($column, $value) ? 'checked' : '' }} class="form-control {{$class}}" autocomplete="off"/>
                 </label>
             </div>
         </div>

@@ -6,22 +6,38 @@ use Encore\Admin\Form\Field;
 
 class SimpleCheckbox extends Field
 {
-    protected $view = 'admin::form.simple_checkbox';
-
-    use Field\PlainInput;
-
-    public function render()
-    {
-        if (isset($this->attributes['readonly'])) {
-            $this->attribute('disabled', true);
-        }
-
-        $this->script = <<<EOT
-
-        $("#check_{$this->id}").on('change', function() {
+	protected $view = 'admin::form.simple_checkbox';
+	
+	protected static $css = [
+		'/vendor/laravel-admin/AdminLTE/plugins/iCheck/all.css',
+	];
+	
+	protected static $js = [
+		'/vendor/laravel-admin/AdminLTE/plugins/iCheck/icheck.min.js',
+	];
+	
+	use Field\PlainInput;
+	
+	public function render()
+	{
+		if (isset($this->attributes['readonly'])) {
+			$this->attribute('disabled', true);
+		}
+		
+		$this
+			->defaultAttribute('id', $this->id)
+			->defaultAttribute('name', $this->elementName ?: $this->formatName($this->column))
+			->defaultAttribute('value', old($this->column, $this->value()))
+			->defaultAttribute('class', 'form-control '.$this->getElementClassString());
+		
+		$name = $this->elementName ?: $this->formatName($this->column);
+		
+		$this->script = <<<EOT
+		$('[id = "check_{$name}"]').iCheck({checkboxClass:'icheckbox_minimal-blue'});
+		$('[id = "check_{$name}"]').on('ifChanged', function() {
             var state = $(this).prop("checked");
 
-            var realInput = $(".{$this->id}");
+            var realInput = $('[name = "{$name}"]');
 
             if (state) {
                 realInput.val('1');
@@ -30,20 +46,14 @@ class SimpleCheckbox extends Field
             }
         });
 EOT;
-
-        $this->initPlainInput();
-
-        $this
-            ->defaultAttribute('id', $this->id)
-            ->defaultAttribute('name', $this->elementName ?: $this->formatName($this->column))
-            ->defaultAttribute('value', old($this->column, $this->value()))
-            ->defaultAttribute('class', 'form-control '.$this->getElementClassString());
-
-        $this->addVariables([
-            'prepend' => $this->prepend,
-            'append'  => $this->append,
-        ]);
-
-        return parent::render();
-    }
+		
+		$this->initPlainInput();
+		
+		$this->addVariables([
+			'prepend' => $this->prepend,
+			'append'  => $this->append,
+		]);
+		
+		return parent::render();
+	}
 }
