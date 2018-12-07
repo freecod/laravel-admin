@@ -56,8 +56,14 @@
       </div>
       <div class="row">
 
+        <div class="col-md-8 col-xs-12">
+            <label class="checkbox-inline" style="padding-left: 0;">
+              <input type="checkbox" value="1" name="remember" checked class="form-control"/>
+              {{ trans('admin.remember_me') }}
+            </label>
+        </div>
         <!-- /.col -->
-        <div class="col-xs-4 col-md-offset-4">
+        <div class="col-md-4 col-xs-12">
           <input type="hidden" name="_token" value="{{ csrf_token() }}">
           <button type="submit" class="btn btn-primary btn-block btn-flat">{{ trans('admin.login') }}</button>
         </div>

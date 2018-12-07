@@ -39,6 +39,7 @@ class AuthController extends Controller
     public function postLogin(Request $request)
     {
         $credentials = $request->only([$this->username(), 'password']);
+	    $remember = $request->get('remember', false);
 
         /** @var \Illuminate\Validation\Validator $validator */
         $validator = Validator::make($credentials, [
@@ -50,7 +51,7 @@ class AuthController extends Controller
             return back()->withInput()->withErrors($validator);
         }
 
-        if ($this->guard()->attempt($credentials)) {
+        if ($this->guard()->attempt($credentials, $remember)) {
             return $this->sendLoginResponse($request);
         }
 
