@@ -33,11 +33,10 @@ class SimpleCheckbox extends Field
 		$name = $this->elementName ?: $this->formatName($this->column);
 		
 		$this->script = <<<EOT
-		$('[id = "check_{$name}"]').iCheck({checkboxClass:'icheckbox_minimal-blue'});
-		$('[id = "check_{$name}"]').on('ifChanged', function() {
+		$('{$this->getElementClassSelector()}').iCheck({checkboxClass:'icheckbox_minimal-blue'});
+		$('{$this->getElementClassSelector()}').on('ifChanged', function() {
             var state = $(this).prop("checked");
-
-            var realInput = $('[name = "{$name}"]');
+            var realInput = $(this).closest('.simple-checkbox-field').find('input[type = hidden]');
 
             if (state) {
                 realInput.val('1');
