@@ -13,10 +13,11 @@
         </div>
 
         @if(in_array('continue_editing', $checkboxes))
-        <label class="pull-right" style="margin: 5px 10px 0 0;">
-            <input type="checkbox" class="after-submit" name="after-save" value="1"> {{ trans('admin.continue_editing') }}
-        </label>
+            <div style="margin: 0 5px 0 0;" class="btn-group pull-right" onclick="$(this).closest('form').attr('action', $(this).closest('form').attr('action') + '?after-save=1');">
+                <button type="submit" class="btn btn-primary">{{ trans('admin.submit_and_continue') }}</button>
+            </div>
         @endif
+
 
         @if(in_array('view', $checkboxes))
         <label class="pull-right" style="margin: 5px 10px 0 0;">
