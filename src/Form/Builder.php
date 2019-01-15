@@ -620,14 +620,22 @@ SCRIPT;
 				
 				    foreach ($row->getFields() as $field) {
 					    /** @var Field $field */
-					    $field->readOnly();
+					    if (is_a($field, Form\Field\Select::class)) {
+						    $field->disable();
+					    } else {
+						    $field->readOnly();
+					    }
 				    }
 			    }
 			
 		    } else {
 			    foreach ($this->fields() as $field) {
 				    /** @var Field $field */
-				    $field->readOnly();
+				    if (is_a($field, Form\Field\Select::class)) {
+					    $field->disable();
+				    } else {
+					    $field->readOnly();
+				    }
 			    }
 		    }
 		
