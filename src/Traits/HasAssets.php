@@ -38,6 +38,7 @@ trait HasAssets
         'vendor/laravel-admin/bootstrap3-editable/css/bootstrap-editable.css',
         'vendor/laravel-admin/google-fonts/source-sans-pro/source-sans-pro.css',
         'vendor/laravel-admin/AdminLTE/dist/css/AdminLTE.min.css',
+	    'vendor/laravel-admin/laravel-admin/laravel-admin-fix.css',
     ];
 
     /**

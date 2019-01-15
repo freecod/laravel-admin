@@ -1,0 +1,22 @@
+.main-footer {
+  padding: 3px !important;
+}
+
+select[disabled] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+section.content table.table.table-hover thead th:last-of-type {
+    width: 150px;
+}
+
+section.content table.table.table-hover td > a > i.fa {
+  font-size: 16px;
+  text-rendering: unset;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 2px;
+}
