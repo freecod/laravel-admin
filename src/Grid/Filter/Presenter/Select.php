@@ -242,6 +242,7 @@ EOT;
         return [
             'options' => $this->buildOptions(),
             'class'   => $this->getElementClass(),
+            'selected' => request()->input($this->filter->getColumn()),
         ];
     }
 
