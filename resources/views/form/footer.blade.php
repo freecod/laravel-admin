@@ -16,7 +16,7 @@
 
         @if(in_array('continue_editing', $checkboxes))
         <div style="margin: 0 5px 0 0;" class="btn-group pull-right" onclick="$('input[name = after-save]').val(1);">
-            <button type="submit" class="btn btn-primary">{{ trans('admin.submit_and_continue') }}</button>
+            <button type="submit" class="btn btn-primary">{{ trans('admin.submit_and_edit') }}</button>
         </div>
         @endif
 
