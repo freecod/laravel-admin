@@ -408,6 +408,43 @@ class Form implements Renderable
 
         return $this->redirectAfterStore();
     }
+	
+	/**
+	 * Return field for modify
+	 *
+	 * @param $column
+	 * @return Field|null
+	 */
+	public function modifyField($column)
+	{
+		return $this->getFieldByColumn($column);
+	}
+	
+	/**
+	 * Remove field
+	 * @param $column
+	 * @return bool
+	 */
+	public function deleteFiled($column)
+	{
+		$fields = $this->builder->fields()->filter(
+			function (Field $field) use ($column) {
+				if (is_array($field->column())) {
+					return in_array($column, $field->column());
+				}
+				
+				return $field->column() == $column;
+			}
+		)->all();
+		
+		if (count($fields)) {
+			$key = array_first(array_keys($fields));
+			$this->builder->fields()->forget($key);
+			return true;
+		}
+		
+		return false;
+	}
 
     /**
      * Get ajax response.
@@ -1148,6 +1185,11 @@ class Form implements Renderable
 
         /** @var Field $field */
         foreach ($this->builder->fields() as $field) {
+        	
+	        if (in_array($field->column(), $this->ignored)) {
+		        continue;
+	        }
+	        
             if (!$validator = $field->getValidator($input)) {
                 continue;
             }
