@@ -9,25 +9,27 @@
 
         @if(in_array('submit', $buttons))
         <div class="btn-group pull-right">
-            <button type="submit" class="btn btn-primary">{{ trans('admin.submit') }}</button>
+            <button type="submit" class="btn btn-primary">{{ trans('admin.submit_and_close') }}</button>
         </div>
 
+        <input type="hidden" name="after-save" value="">
+
         @if(in_array('continue_editing', $checkboxes))
-        <label class="pull-right" style="margin: 5px 10px 0 0;">
-            <input type="checkbox" class="after-submit" name="after-save" value="1"> {{ trans('admin.continue_editing') }}
-        </label>
+        <div style="margin: 0 5px 0 0;" class="btn-group pull-right" onclick="$('input[name = after-save]').val(1);">
+            <button type="submit" class="btn btn-primary">{{ trans('admin.submit_and_continue') }}</button>
+        </div>
         @endif
 
         @if(in_array('continue_creating', $checkboxes))
-            <label class="pull-right" style="margin: 5px 10px 0 0;">
-                <input type="checkbox" class="after-submit" name="after-save" value="2"> {{ trans('admin.continue_creating') }}
-            </label>
+        <div style="margin: 0 5px 0 0;" class="btn-group pull-right" onclick="$('input[name = after-save]').val(2);">
+            <button type="submit" class="btn btn-primary">{{ trans('admin.submit_and_create') }}</button>
+        </div>
         @endif
 
         @if(in_array('view', $checkboxes))
-        <label class="pull-right" style="margin: 5px 10px 0 0;">
-            <input type="checkbox" class="after-submit" name="after-save" value="3"> {{ trans('admin.view') }}
-        </label>
+        <div style="margin: 0 5px 0 0;" class="btn-group pull-right" onclick="$('input[name = after-save]').val(3);">
+            <button type="submit" class="btn btn-primary">{{ trans('admin.submit_and_view') }}</button>
+        </div>
         @endif
 
         @endif
