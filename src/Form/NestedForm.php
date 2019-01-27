@@ -89,6 +89,13 @@ class NestedForm
     protected $form;
 
     /**
+     * Ignored saving fields.
+     *
+     * @var array
+     */
+    protected $ignored = [];
+
+    /**
      * Create a new NestedForm instance.
      *
      * NestedForm constructor.
@@ -163,9 +170,38 @@ class NestedForm
     public function prepare($input)
     {
         foreach ($input as $key => $record) {
+            $record = $this->removeIgnoredFields($record);
             $this->setFieldOriginalValue($key);
             $input[$key] = $this->prepareRecord($record);
         }
+
+        return $input;
+    }
+
+    /**
+     * Ignore fields to save.
+     *
+     * @param string|array $fields
+     *
+     * @return $this
+     */
+    public function ignore($fields)
+    {
+        $this->ignored = array_merge($this->ignored, (array) $fields);
+
+        return $this;
+    }
+
+    /**
+     * Remove ignored fields from input.
+     *
+     * @param array $input
+     *
+     * @return array
+     */
+    protected function removeIgnoredFields($input)
+    {
+        array_forget($input, $this->ignored);
 
         return $input;
     }
