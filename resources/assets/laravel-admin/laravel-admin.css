@@ -60,3 +60,7 @@ a.editable-empty {
 .table-has-many label.control-label[for=inputError]+br {
     display: none;
 }
+
+.switch-checkbox {
+    margin-top: 6px;
+}

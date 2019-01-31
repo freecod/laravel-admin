@@ -18,6 +18,14 @@ class SwitchField extends Field
         'on'  => ['value' => 1, 'text' => 'ON', 'color' => 'primary'],
         'off' => ['value' => 0, 'text' => 'OFF', 'color' => 'default'],
     ];
+    
+    protected $checkbox = false;
+    
+    public function checkbox($useCheckboxStyle = true)
+    {
+        $this->checkbox = $useCheckboxStyle;
+        return $this;
+    }
 
     public function states($states = [])
     {
@@ -46,7 +54,18 @@ class SwitchField extends Field
             }
         }
 
-        $this->script = <<<EOT
+        if ($this->checkbox) {
+    
+            $this->script = <<<EOT
+
+$('{$this->getElementClassSelector()}.la_checkbox').iCheck({checkboxClass:'icheckbox_minimal-blue switch-checkbox'}).on('ifChanged', function() {
+            var state = $(this).prop("checked");
+            $(this).closest('.icheckbox_minimal-blue').next().val(state ? 'on' : 'off').change();
+        });
+
+EOT;
+        } else {
+            $this->script = <<<EOT
 
 $('{$this->getElementClassSelector()}.la_checkbox').bootstrapSwitch({
     size:'small',
@@ -60,6 +79,7 @@ $('{$this->getElementClassSelector()}.la_checkbox').bootstrapSwitch({
 });
 
 EOT;
+        }
 
         return parent::render();
     }
