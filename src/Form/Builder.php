@@ -47,7 +47,6 @@ class Builder
     /**
      * Modes constants.
      */
-	const MODE_VIEW = 'view';
     const MODE_EDIT = 'edit';
     const MODE_CREATE = 'create';
 
@@ -219,7 +218,7 @@ class Builder
      */
     public function getResource($slice = null)
     {
-	    if ($this->mode == self::MODE_CREATE || $this->mode == self::MODE_VIEW) {
+        if ($this->mode == self::MODE_CREATE) {
             return $this->form->resource(-1);
         }
         if ($slice !== null) {
@@ -275,11 +274,6 @@ class Builder
         if ($this->action) {
             return $this->action;
         }
-	
-	    if ($this->isMode(static::MODE_VIEW)) {
-        	// empty form action in view mode
-		    return '#';
-	    }
 
         if ($this->isMode(static::MODE_EDIT)) {
             return $this->form->resource().'/'.$this->id;
@@ -425,10 +419,6 @@ class Builder
         if ($this->title) {
             return $this->title;
         }
-	
-	    if ($this->mode == static::MODE_VIEW) {
-		    return trans('admin.view');
-	    }
 
         if ($this->mode == static::MODE_CREATE) {
             return trans('admin.create');
@@ -602,44 +592,6 @@ if ($('.has-error').length) {
 SCRIPT;
             Admin::script($script);
         }
-	
-	    // disable all tools except List for Create mode
-	    if ($this->getMode() == self::MODE_CREATE) {
-		    $this->tools->disableView();
-		    $this->tools->disableEdit();
-		    $this->tools->disableDelete();
-	    }
-	
-	    // make all fields read-only for view mode
-	    if ($this->getMode() == self::MODE_VIEW) {
-		
-		    if ($this->hasRows()) {
-			
-			    foreach ($this->getRows() as $row) {
-				    /** @var Row $row */
-				
-				    foreach ($row->getFields() as $field) {
-					    /** @var Field $field */
-					    if (is_a($field, Form\Field\Select::class)) {
-						    $field->disable();
-					    } else {
-						    $field->readOnly();
-					    }
-				    }
-			    }
-			
-		    } else {
-			    foreach ($this->fields() as $field) {
-				    /** @var Field $field */
-				    if (is_a($field, Form\Field\Select::class)) {
-					    $field->disable();
-				    } else {
-					    $field->readOnly();
-				    }
-			    }
-		    }
-		
-	    }
 
         $data = [
             'form'   => $this,

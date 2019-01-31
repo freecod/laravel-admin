@@ -8,7 +8,6 @@ use Encore\Admin\Form\Builder;
 use Encore\Admin\Form\Field;
 use Encore\Admin\Form\Row;
 use Encore\Admin\Form\Tab;
-use Encore\Admin\Form\Tools;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations;
@@ -250,38 +249,9 @@ class Form implements Renderable
         $this->builder->setResourceId($id);
 
         $this->setFieldValue($id);
-        
-	    $this->tools(function (Tools $tools) {
-		    $tools->disableEdit();
-	    });
 
         return $this;
     }
-	
-	/**
-	 * Generate a view form.
-	 *
-	 * @param $id
-	 *
-	 * @return $this
-	 */
-	public function view($id)
-	{
-		$this->builder->setMode(Builder::MODE_VIEW);
-		$this->builder->setResourceId($id);
-		
-		$this->setFieldValue($id);
-		$this->tools(function (Tools $tools) {
-			$tools->disableView();
-		});
-		
-		$this->builder->getFooter()->disableReset();
-		$this->builder->getFooter()->disableSubmit();
-		$this->builder->getFooter()->disableEditingCheck();
-		$this->builder->getFooter()->disableViewCheck();
-		
-		return $this;
-	}
 
     /**
      * Use tab to split form.
@@ -408,43 +378,6 @@ class Form implements Renderable
 
         return $this->redirectAfterStore();
     }
-	
-	/**
-	 * Return field for modify
-	 *
-	 * @param $column
-	 * @return Field|null
-	 */
-	public function modifyField($column)
-	{
-		return $this->getFieldByColumn($column);
-	}
-	
-	/**
-	 * Remove field
-	 * @param $column
-	 * @return bool
-	 */
-	public function deleteFiled($column)
-	{
-		$fields = $this->builder->fields()->filter(
-			function (Field $field) use ($column) {
-				if (is_array($field->column())) {
-					return in_array($column, $field->column());
-				}
-				
-				return $field->column() == $column;
-			}
-		)->all();
-		
-		if (count($fields)) {
-			$key = array_first(array_keys($fields));
-			$this->builder->fields()->forget($key);
-			return true;
-		}
-		
-		return false;
-	}
 
     /**
      * Get ajax response.
@@ -1185,11 +1118,6 @@ class Form implements Renderable
 
         /** @var Field $field */
         foreach ($this->builder->fields() as $field) {
-        	
-	        if (in_array($field->column(), $this->ignored)) {
-		        continue;
-	        }
-	        
             if (!$validator = $field->getValidator($input)) {
                 continue;
             }
