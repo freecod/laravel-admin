@@ -109,22 +109,14 @@ SCRIPT;
                 
                 foreach ($row->getFields() as $field) {
                     /** @var Field $field */
-                    if (is_a($field, Field\Select::class) || is_a($field, Field\SwitchField::class)) {
-                        $field->disable();
-                    } else {
-                        $field->readOnly();
-                    }
+                    $field->readOnly();
                 }
             }
             
         } else {
             foreach ($this->fields() as $field) {
                 /** @var Field $field */
-                if (is_a($field, Field\Select::class) || is_a($field, Field\SwitchField::class)) {
-                    $field->disable();
-                } else {
-                    $field->readOnly();
-                }
+                $field->readOnly();
             }
         }
     
