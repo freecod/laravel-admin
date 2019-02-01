@@ -89,6 +89,22 @@ class HasMany extends Field
         }
     }
 
+    public function readOnly()
+    {
+        $this->disableCreate();
+        $this->disableDelete();
+        
+        return parent::readOnly();
+    }
+    
+    public function disable()
+    {
+        $this->disableCreate();
+        $this->disableDelete();
+        
+        return parent::disable();
+    }
+    
     /**
      * Get validator for this field.
      *
@@ -294,6 +310,12 @@ class HasMany extends Field
         $form->hidden($this->getKeyName());
 
         $form->hidden(NestedForm::REMOVE_FLAG_NAME)->default(0)->addElementClass(NestedForm::REMOVE_FLAG_CLASS);
+        
+        // apply field attributes to nested form fields
+        foreach ($form->fields() as $field) {
+            /** @var Field $field */
+            $field->attribute($this->attributes);
+        }
 
         return $form;
     }
