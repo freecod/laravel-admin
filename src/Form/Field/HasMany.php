@@ -305,7 +305,7 @@ class HasMany extends Field
 
         $form->setForm($this->form);
 
-        call_user_func($builder, $form);
+        call_user_func($builder, $form, $key);
 
         $form->hidden($this->getKeyName());
 
