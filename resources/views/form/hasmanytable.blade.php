@@ -3,7 +3,7 @@
     <div class="{{$viewClass['label']}}"><h4 class="pull-right">{{ $label }}</h4></div>
     <div class="{{$viewClass['field']}}">
         <div id="has-many-{{$column}}" style="margin-top: 15px;">
-            <table class="table table-has-many has-many-{{$column}}">
+            <table class="table table-has-many has-many-{{$column}} {{ $class }}">
                 <thead>
                 <tr>
                     @foreach($headers as $header)
