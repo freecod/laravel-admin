@@ -121,7 +121,15 @@ class Actions extends AbstractDisplayer
      */
     public function display($callback = null)
     {
-        if ($callback instanceof \Closure) {
+        if (is_array($callback) && count($callback)) {
+
+            foreach ($callback as $item) {
+                if ($item instanceof \Closure) {
+                    $item->call($this, $this);
+                }
+            }
+
+        } elseif ($callback instanceof \Closure) {
             $callback->call($this, $this);
         }
 
