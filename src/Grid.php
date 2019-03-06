@@ -140,7 +140,7 @@ class Grid
      *
      * @var Closure
      */
-    protected $actionsCallback;
+    protected $actionsCallbacks;
 
     /**
      * Options for grid.
@@ -455,7 +455,7 @@ class Grid
      */
     public function actions(Closure $callback)
     {
-        $this->actionsCallback = $callback;
+        $this->actionsCallbacks[] = $callback;
 
         return $this;
     }
@@ -472,7 +472,7 @@ class Grid
         }
 
         $this->addColumn('__actions__', trans('admin.action'))
-            ->displayUsing(Displayers\Actions::class, [$this->actionsCallback]);
+            ->displayUsing(Displayers\Actions::class, [$this->actionsCallbacks]);
     }
 
     /**
