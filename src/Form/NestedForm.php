@@ -94,6 +94,12 @@ class NestedForm
      * @var array
      */
     protected $ignored = [];
+    
+    /**
+     * Field for force update (even it don't changed)
+     * @var array
+     */
+    protected $forceUpdate = [];
 
     /**
      * Create a new NestedForm instance.
@@ -191,6 +197,17 @@ class NestedForm
 
         return $this;
     }
+    
+    /**
+     * @param $fields
+     * @return $this
+     */
+    public function forceUpdate($fields)
+    {
+        $this->forceUpdate = array_merge($this->forceUpdate, (array) $fields);
+        
+        return $this;
+    }
 
     /**
      * Remove ignored fields from input.
@@ -253,7 +270,7 @@ class NestedForm
                 $value = $field->prepare($value);
             }
 
-            if (($field instanceof \Encore\Admin\Form\Field\Hidden) || $value != $field->original()) {
+            if (($field instanceof \Encore\Admin\Form\Field\Hidden) || $value != $field->original() || (is_string($columns) && in_array($columns, $this->forceUpdate))) {
                 if (is_array($columns)) {
                     foreach ($columns as $name => $column) {
                         array_set($prepared, $column, $value[$name]);
