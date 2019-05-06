@@ -142,6 +142,10 @@ abstract class BaseController extends Controller
             ->body($this->form());
     }
     
+    public function update($id)
+    {
+        return $this->form($id)->update($id);
+    }
     
     /**
      * Return Eloquent model for current controller
