@@ -1042,6 +1042,11 @@ class Field implements Renderable
         return 'admin::form.'.strtolower(end($class));
     }
 
+    public function setView($view)
+    {
+        $this->view = $view;
+    }
+
     /**
      * Get script of current field.
      *
