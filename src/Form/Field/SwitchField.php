@@ -3,6 +3,7 @@
 namespace Encore\Admin\Form\Field;
 
 use Encore\Admin\Form\Field;
+use Illuminate\Support\Arr;
 
 class SwitchField extends Field
 {
@@ -27,10 +28,19 @@ class SwitchField extends Field
         return $this;
     }
 
+    protected $size = 'small';
+
+    public function setSize($size)
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
     public function states($states = [])
     {
-        foreach (array_dot($states) as $key => $state) {
-            array_set($this->states, $key, $state);
+        foreach (Arr::dot($states) as $key => $state) {
+            Arr::set($this->states, $key, $state);
         }
 
         return $this;
@@ -68,7 +78,7 @@ EOT;
             $this->script = <<<EOT
 
 $('{$this->getElementClassSelector()}.la_checkbox').bootstrapSwitch({
-    size:'small',
+    size:'{$this->size}',
     onText: '{$this->states['on']['text']}',
     offText: '{$this->states['off']['text']}',
     onColor: '{$this->states['on']['color']}',
