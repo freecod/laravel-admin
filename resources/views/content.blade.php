@@ -10,19 +10,19 @@
         <!-- breadcrumb start -->
         @if ($breadcrumb)
         <ol class="breadcrumb" style="margin-right: 30px;">
-            <li><a href="{{ admin_url('/') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ admin_url('/') }}"><i class="fa fa-dashboard"></i> {{__('Home')}}</a></li>
             @foreach($breadcrumb as $item)
                 @if($loop->last)
                     <li class="active">
-                        @if (array_has($item, 'icon'))
+                        @if (\Illuminate\Support\Arr::has($item, 'icon'))
                             <i class="fa fa-{{ $item['icon'] }}"></i>
                         @endif
                         {{ $item['text'] }}
                     </li>
                 @else
                 <li>
-                    <a href="{{ admin_url(array_get($item, 'url')) }}">
-                        @if (array_has($item, 'icon'))
+                    <a href="{{ admin_url(\Illuminate\Support\Arr::get($item, 'url')) }}">
+                        @if (\Illuminate\Support\Arr::has($item, 'icon'))
                             <i class="fa fa-{{ $item['icon'] }}"></i>
                         @endif
                         {{ $item['text'] }}
@@ -33,7 +33,7 @@
         </ol>
         @elseif(config('admin.enable_default_breadcrumb'))
         <ol class="breadcrumb" style="margin-right: 30px;">
-            <li><a href="{{ admin_url('/') }}"><i class="fa fa-dashboard"></i> Home</a></li>   
+            <li><a href="{{ admin_url('/') }}"><i class="fa fa-dashboard"></i> {{__('Home')}}</a></li>
             @for($i = 2; $i <= count(Request::segments()); $i++)
                 <li>
                 {{ucfirst(Request::segment($i))}}

@@ -75,7 +75,7 @@ class Permission extends Model
             }
 
             return compact('method', 'path');
-        }, explode("\r\n", $this->http_path));
+        }, explode("\n", $this->http_path));
 
         foreach ($matches as $match) {
             if ($this->matchRequest($match, $request)) {
@@ -84,6 +84,18 @@ class Permission extends Model
         }
 
         return false;
+    }
+
+    /**
+     * filter \r.
+     *
+     * @param string $path
+     *
+     * @return mixed
+     */
+    public function getHttpPathAttribute($path)
+    {
+        return str_replace("\r\n", "\n", $path);
     }
 
     /**
@@ -96,7 +108,13 @@ class Permission extends Model
      */
     protected function matchRequest(array $match, Request $request) : bool
     {
-        if (!$request->is(trim($match['path'], '/'))) {
+        if ($match['path'] == '/') {
+            $path = '/';
+        } else {
+            $path = trim($match['path'], '/');
+        }
+
+        if (!$request->is($path)) {
             return false;
         }
 

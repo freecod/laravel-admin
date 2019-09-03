@@ -3,33 +3,38 @@
 namespace Encore\Admin\Grid;
 
 use Encore\Admin\Grid\Filter\AbstractFilter;
-use Encore\Admin\Grid\Filter\Group;
 use Encore\Admin\Grid\Filter\Layout\Layout;
 use Encore\Admin\Grid\Filter\Scope;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Str;
 
 /**
  * Class Filter.
  *
- * @method AbstractFilter     equal($column, $label = '')
- * @method AbstractFilter     notEqual($column, $label = '')
- * @method AbstractFilter     like($column, $label = '')
- * @method AbstractFilter     ilike($column, $label = '')
- * @method AbstractFilter     gt($column, $label = '')
- * @method AbstractFilter     lt($column, $label = '')
- * @method AbstractFilter     between($column, $label = '')
- * @method AbstractFilter     in($column, $label = '')
- * @method AbstractFilter     notIn($column, $label = '')
- * @method AbstractFilter     where($callback, $label)
- * @method AbstractFilter     date($column, $label = '')
- * @method AbstractFilter     day($column, $label = '')
- * @method AbstractFilter     month($column, $label = '')
- * @method AbstractFilter     year($column, $label = '')
- * @method AbstractFilter     hidden($name, $value)
- * @method AbstractFilter     group($column, $label = '', $builder = null)
+ * @method AbstractFilter equal($column, $label = '')
+ * @method AbstractFilter notEqual($column, $label = '')
+ * @method AbstractFilter leftLike($column, $label = '')
+ * @method AbstractFilter like($column, $label = '')
+ * @method AbstractFilter contains($column, $label = '')
+ * @method AbstractFilter startsWith($column, $label = '')
+ * @method AbstractFilter endsWith($column, $label = '')
+ * @method AbstractFilter ilike($column, $label = '')
+ * @method AbstractFilter gt($column, $label = '')
+ * @method AbstractFilter lt($column, $label = '')
+ * @method AbstractFilter between($column, $label = '')
+ * @method AbstractFilter in($column, $label = '')
+ * @method AbstractFilter notIn($column, $label = '')
+ * @method AbstractFilter where($callback, $label = '', $column = null)
+ * @method AbstractFilter date($column, $label = '')
+ * @method AbstractFilter day($column, $label = '')
+ * @method AbstractFilter month($column, $label = '')
+ * @method AbstractFilter year($column, $label = '')
+ * @method AbstractFilter hidden($name, $value)
+ * @method AbstractFilter group($column, $label = '', $builder = null)
  */
 class Filter implements Renderable
 {
@@ -46,9 +51,26 @@ class Filter implements Renderable
     /**
      * @var array
      */
-    protected $supports = [
-        'equal', 'notEqual', 'ilike', 'like', 'gt', 'lt', 'between', 'group',
-        'where', 'in', 'notIn', 'date', 'day', 'month', 'year', 'hidden',
+    protected static $supports = [
+        'equal'      => Filter\Equal::class,
+        'notEqual'   => Filter\NotEqual::class,
+        'ilike'      => Filter\Ilike::class,
+        'like'       => Filter\Like::class,
+        'gt'         => Filter\Gt::class,
+        'lt'         => Filter\Lt::class,
+        'between'    => Filter\Between::class,
+        'group'      => Filter\Group::class,
+        'where'      => Filter\Where::class,
+        'in'         => Filter\In::class,
+        'notIn'      => Filter\NotIn::class,
+        'date'       => Filter\Date::class,
+        'day'        => Filter\Day::class,
+        'month'      => Filter\Month::class,
+        'year'       => Filter\Year::class,
+        'hidden'     => Filter\Hidden::class,
+        'contains'   => Filter\Like::class,
+        'startsWith' => Filter\StartsWith::class,
+        'endsWith'   => Filter\EndsWith::class,
     ];
 
     /**
@@ -169,7 +191,12 @@ class Filter implements Renderable
      */
     public function getModel()
     {
-        return $this->model;
+        $conditions = array_merge(
+            $this->conditions(),
+            $this->scopeConditions()
+        );
+
+        return $this->model->addConditions($conditions);
     }
 
     /**
@@ -223,9 +250,9 @@ class Filter implements Renderable
      *
      * @return $this
      */
-    public function disableIdFilter()
+    public function disableIdFilter(bool $disable = true)
     {
-        $this->useIdFilter = false;
+        $this->useIdFilter = !$disable;
 
         return $this;
     }
@@ -257,7 +284,7 @@ class Filter implements Renderable
      *
      * @param mixed $id
      */
-    protected function removeFilterByID($id)
+    public function removeFilterByID($id)
     {
         $this->filters = array_filter($this->filters, function (AbstractFilter $filter) use ($id) {
             return $filter->getId() != $id;
@@ -271,7 +298,7 @@ class Filter implements Renderable
      */
     public function conditions()
     {
-        $inputs = array_dot(Input::all());
+        $inputs = Arr::dot(Input::all());
 
         $inputs = array_filter($inputs, function ($input) {
             return $input !== '' && !is_null($input);
@@ -286,7 +313,7 @@ class Filter implements Renderable
         $params = [];
 
         foreach ($inputs as $key => $value) {
-            array_set($params, $key, $value);
+            Arr::set($params, $key, $value);
         }
 
         $conditions = [];
@@ -295,7 +322,7 @@ class Filter implements Renderable
 
         foreach ($this->filters() as $filter) {
             if (in_array($column = $filter->getColumn(), $this->layoutOnlyFilterColumns)) {
-                $filter->default(array_get($params, $column));
+                $filter->default(Arr::get($params, $column));
             } else {
                 $conditions[] = $filter->condition($params);
             }
@@ -320,7 +347,7 @@ class Filter implements Renderable
         }
 
         $inputs = collect($inputs)->filter(function ($input, $key) {
-            return starts_with($key, "{$this->name}_");
+            return Str::startsWith($key, "{$this->name}_");
         })->mapWithKeys(function ($val, $key) {
             $key = str_replace("{$this->name}_", '', $key);
 
@@ -472,6 +499,11 @@ class Filter implements Renderable
      */
     public function execute($toArray = true)
     {
+        if (method_exists($this->model->eloquent(), 'paginate')) {
+            $this->model->usePaginate(true);
+
+            return $this->model->buildData($toArray);
+        }
         $conditions = array_merge(
             $this->conditions(),
             $this->scopeConditions()
@@ -525,7 +557,7 @@ class Filter implements Renderable
     public function urlWithoutFilters()
     {
         /** @var Collection $columns */
-        $columns = collect($this->filters)->map->getColumn();
+        $columns = collect($this->filters)->map->getColumn()->flatten();
 
         $pageKey = 'page';
 
@@ -536,7 +568,7 @@ class Filter implements Renderable
         $columns->push($pageKey);
 
         $groupNames = collect($this->filters)->filter(function ($filter) {
-            return $filter instanceof Group;
+            return $filter instanceof Filter\Group;
         })->map(function (AbstractFilter $filter) {
             return "{$filter->getId()}_group";
         });
@@ -574,13 +606,39 @@ class Filter implements Renderable
         $request = request();
 
         $query = $request->query();
-        array_forget($query, $keys);
+        Arr::forget($query, $keys);
 
         $question = $request->getBaseUrl().$request->getPathInfo() == '/' ? '/?' : '?';
 
         return count($request->query()) > 0
             ? $request->url().$question.http_build_query($query)
             : $request->fullUrl();
+    }
+
+    /**
+     * @param string $name
+     * @param string $filterClass
+     */
+    public static function extend($name, $filterClass)
+    {
+        if (!is_subclass_of($filterClass, AbstractFilter::class)) {
+            throw new \InvalidArgumentException("The class [$filterClass] must be a type of ".AbstractFilter::class.'.');
+        }
+
+        static::$supports[$name] = $filterClass;
+    }
+
+    /**
+     * @param string $abstract
+     * @param array  $arguments
+     *
+     * @return AbstractFilter
+     */
+    public function resolveFilter($abstract, $arguments)
+    {
+        if (isset(static::$supports[$abstract])) {
+            return new static::$supports[$abstract](...$arguments);
+        }
     }
 
     /**
@@ -593,10 +651,8 @@ class Filter implements Renderable
      */
     public function __call($method, $arguments)
     {
-        if (in_array($method, $this->supports)) {
-            $className = '\\Encore\\Admin\\Grid\\Filter\\'.ucfirst($method);
-
-            return $this->addFilter(new $className(...$arguments));
+        if ($filter = $this->resolveFilter($method, $arguments)) {
+            return $this->addFilter($filter);
         }
 
         return $this;
