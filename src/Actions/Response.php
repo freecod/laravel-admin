@@ -49,6 +49,11 @@ class Response
     protected $then = [];
 
     /**
+     * @var string
+     */
+    protected $html = '';
+
+    /**
      * @return $this
      */
     public function toastr()
@@ -85,7 +90,7 @@ class Response
      *
      * @return $this
      */
-    public function success(?string $message)
+    public function success(string $message = '')
     {
         return $this->show('success', $message);
     }
@@ -95,7 +100,7 @@ class Response
      *
      * @return $this
      */
-    public function info(?string $message)
+    public function info(string $message = '')
     {
         return $this->show('info', $message);
     }
@@ -105,7 +110,7 @@ class Response
      *
      * @return $this
      */
-    public function warning(?string $message)
+    public function warning(string $message = '')
     {
         return $this->show('warning', $message);
     }
@@ -115,7 +120,7 @@ class Response
      *
      * @return $this
      */
-    public function error(?string $message)
+    public function error(string $message = '')
     {
         return $this->show('error', $message);
     }
@@ -174,6 +179,20 @@ class Response
     }
 
     /**
+     * Send a html response.
+     *
+     * @param string $html
+     *
+     * @return $this
+     */
+    public function html($html = '')
+    {
+        $this->html = $html;
+
+        return $this;
+    }
+
+    /**
      * @param \Exception $exception
      *
      * @return mixed
@@ -202,6 +221,10 @@ class Response
             ['status' => $this->status, 'then' => $this->then],
             $this->getPlugin()->getOptions()
         );
+
+        if ($this->html) {
+            $data['html'] = $this->html;
+        }
 
         return response()->json($data);
     }
