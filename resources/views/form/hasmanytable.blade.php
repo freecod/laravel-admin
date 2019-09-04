@@ -4,9 +4,10 @@
     }
 </style>
 
-<div class="row">
+<div class="row {!! !$errors->has($column) ?: 'has-error' !!}">
     <div class="{{$viewClass['label']}}"><h4 class="pull-right">{{ $label }}</h4></div>
     <div class="{{$viewClass['field']}}">
+        @include('admin::form.error')
         <div id="has-many-{{$column}}" style="margin-top: 15px;">
             <table class="table table-has-many has-many-{{$column}}">
                 <thead>
