@@ -35,27 +35,6 @@ trait HasResourceActions
      */
     public function destroy($id)
     {
-        $result = false;
-    
-        try {
-            $result = $this->form()->destroy($id);
-        
-        } catch (\Exception $ex) {
-            \Log::error($ex->getMessage(), $ex->getTrace());
-        }
-    
-        if ($result) {
-            $data = [
-                'status'  => true,
-                'message' => trans('admin.delete_succeeded'),
-            ];
-        } else {
-            $data = [
-                'status'  => false,
-                'message' => trans('admin.delete_failed'),
-            ];
-        }
-    
-        return response()->json($data);
+        return $this->form()->destroy($id);
     }
 }
