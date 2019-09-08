@@ -57,14 +57,6 @@ class Currency extends Text
     /**
      * {@inheritdoc}
      */
-    public function prepare($value)
-    {
-        return (float) $value;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function render()
     {
         $options = json_encode($this->options);
