@@ -13,7 +13,7 @@ class ExportSeedCommand extends Command
      */
     protected $signature = 'admin:export-seed {classname=AdminTablesSeeder}
                                               {--users : add to seed users tables}
-                                              {--except-fields=id,created_at,updated_at : except fields}';
+                                              {--except-fields=created_at,updated_at : except fields}';
 
     /**
      * The console command description.
