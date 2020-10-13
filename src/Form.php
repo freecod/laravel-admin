@@ -40,6 +40,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @method Field\Email          email($column, $label = '')
  * @method Field\Mobile         mobile($column, $label = '')
  * @method Field\Slider         slider($column, $label = '')
+ * @method Field\Editor         editor($column, $label = '')
  * @method Field\File           file($column, $label = '')
  * @method Field\Image          image($column, $label = '')
  * @method Field\Date           date($column, $label = '')
@@ -144,6 +145,7 @@ class Form implements Renderable
         'divider'        => Field\Divider::class,
         'embeds'         => Field\Embeds::class,
         'email'          => Field\Email::class,
+        'editor'         => Field\Editor::class,
         'file'           => Field\File::class,
         'hasMany'        => Field\HasMany::class,
         'hidden'         => Field\Hidden::class,
