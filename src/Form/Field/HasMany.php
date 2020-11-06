@@ -556,6 +556,7 @@ $('#has-many-{$this->column}').on('click', '.add', function () {
 
 $('#has-many-{$this->column}').on('click', '.remove', function () {
     $(this).closest('.has-many-{$this->column}-form').hide();
+    $(this).closest('.has-many-{$this->column}-form').find('[required]').removeAttr('required');
     $(this).closest('.has-many-{$this->column}-form').find('.$removeClass').val(1);
     return false;
 });
